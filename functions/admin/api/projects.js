@@ -2,12 +2,17 @@
 //
 // Route: /admin/api/projects  (GET, POST, PUT, DELETE)
 //
-// This route lives under /admin/* on purpose: protect the whole /admin* path
-// with Cloudflare Access (Zero Trust -> Access -> Applications -> add an
-// application for this domain matching path /admin*) and both the dashboard
-// page AND this API are covered by the same login gate. Access sits in front
-// of Pages at Cloudflare's edge, so requests from anyone who hasn't signed in
-// never reach this code — nothing here needs to re-check identity itself.
+// Protected by a shared passcode: every request must carry a header
+// `X-Admin-Passcode` matching the ADMIN_PASSCODE secret configured on this
+// Pages project (Settings -> Variables and Secrets -> add ADMIN_PASSCODE).
+// admin/index.html shows a passcode gate before the dashboard and attaches
+// this header on every call it makes here.
+//
+// If you'd rather gate this at Cloudflare's edge instead (Zero Trust ->
+// Access -> Applications, path /admin*), you can layer that on top of this —
+// it costs nothing to have both — but this passcode check is what actually
+// protects the API today, since Access has to be deliberately set up per
+// account and this file can't assume that's been done.
 //
 // Uses the same PROJECTS_KV binding as the public /api/projects endpoint —
 // same namespace, same "projects" key, so writes here show up on the site
@@ -20,6 +25,19 @@ function json(data, status) {
     status: status || 200,
     headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
   });
+}
+
+// Fails closed: if ADMIN_PASSCODE isn't configured, every request is
+// rejected rather than left open. The response doesn't say which case
+// applies (not configured vs. wrong passcode) so an unauthenticated caller
+// can't use it to fingerprint the deployment's configuration state.
+function checkAuth(request, env) {
+  const expected = env.ADMIN_PASSCODE;
+  const provided = request.headers.get("X-Admin-Passcode");
+  if (!expected || !provided || provided !== expected) {
+    return json({ error: "Unauthorized" }, 401);
+  }
+  return null;
 }
 
 async function readProjects(env) {
@@ -65,6 +83,8 @@ function checkPreconditions(env) {
 }
 
 export async function onRequestGet(context) {
+  const authErr = checkAuth(context.request, context.env);
+  if (authErr) return authErr;
   const pre = checkPreconditions(context.env);
   if (pre) return pre;
   const projects = await readProjects(context.env);
@@ -72,6 +92,8 @@ export async function onRequestGet(context) {
 }
 
 export async function onRequestPost(context) {
+  const authErr = checkAuth(context.request, context.env);
+  if (authErr) return authErr;
   const pre = checkPreconditions(context.env);
   if (pre) return pre;
 
@@ -103,6 +125,8 @@ export async function onRequestPost(context) {
 }
 
 export async function onRequestPut(context) {
+  const authErr = checkAuth(context.request, context.env);
+  if (authErr) return authErr;
   const pre = checkPreconditions(context.env);
   if (pre) return pre;
 
@@ -138,6 +162,8 @@ export async function onRequestPut(context) {
 }
 
 export async function onRequestDelete(context) {
+  const authErr = checkAuth(context.request, context.env);
+  if (authErr) return authErr;
   const pre = checkPreconditions(context.env);
   if (pre) return pre;
 

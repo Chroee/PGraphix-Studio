@@ -119,6 +119,21 @@
     border:1px dashed var(--line);border-radius:10px;
   }
   .error-state{color:var(--danger);border-color:rgba(255,92,122,.3);}
+
+  .gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .gate-card{
+    width:100%;max-width:360px;background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:34px 28px;display:flex;flex-direction:column;gap:16px;text-align:center;
+  }
+  .gate-card h1{font-size:1.3rem;margin-top:6px;}
+  .gate-sub{color:var(--text-muted);font-size:.86rem;margin:0 0 4px;}
+  .gate-card .field{text-align:left;}
+  .top-actions{display:flex;align-items:center;gap:16px;}
+  .logout-btn{
+    font-family:var(--font-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--text-faint);background:none;border:0;padding:0;
+  }
+  .logout-btn:hover{color:var(--danger);}
 </style>
 </head>
 <body>
@@ -128,13 +143,36 @@
   <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4l10.5-10.5a1.5 1.5 0 0 0 0-2.1l-1.9-1.9a1.5 1.5 0 0 0-2.1 0L4 16v4Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </svg>
 
-<div class="shell">
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div>
+      <p class="eyebrow">PGraphix Studio</p>
+      <h1>Portfolio Admin</h1>
+    </div>
+    <p class="gate-sub">Enter the admin passcode to continue.</p>
+    <form id="gateForm">
+      <div class="field">
+        <label for="gPasscode">Passcode</label>
+        <input id="gPasscode" type="password" autocomplete="current-password" required autofocus>
+      </div>
+      <div class="btn-row">
+        <button type="submit" class="btn btn-primary" id="gateSubmitBtn">Enter</button>
+      </div>
+      <p class="status-msg" id="gateStatus" role="status"></p>
+    </form>
+  </div>
+</div>
+
+<div class="shell" id="dashboard" hidden>
   <div class="top">
     <div>
       <p class="eyebrow">PGraphix Studio</p>
       <h1>Portfolio Admin</h1>
     </div>
-    <a class="back" href="/">&larr; Back to live site</a>
+    <div class="top-actions">
+      <button type="button" class="logout-btn" id="logoutBtn">Log out</button>
+      <a class="back" href="/">&larr; Back to live site</a>
+    </div>
   </div>
 
   <div class="layout">
@@ -205,6 +243,103 @@
   var projects = [];
   var activeFilter = 'all';
   var editingId = null;
+
+  var PASSCODE_KEY = 'pgAdminPasscode';
+
+  var gate = document.getElementById('gate');
+  var dashboard = document.getElementById('dashboard');
+  var gateForm = document.getElementById('gateForm');
+  var gatePasscodeInput = document.getElementById('gPasscode');
+  var gateStatus = document.getElementById('gateStatus');
+  var gateSubmitBtn = document.getElementById('gateSubmitBtn');
+  var logoutBtn = document.getElementById('logoutBtn');
+
+  function getPasscode(){
+    try { return sessionStorage.getItem(PASSCODE_KEY) || ''; }
+    catch (err) { return ''; }
+  }
+
+  function setPasscode(code){
+    try { sessionStorage.setItem(PASSCODE_KEY, code); }
+    catch (err) { /* sessionStorage unavailable — passcode just won't persist across reloads */ }
+  }
+
+  function clearPasscode(){
+    try { sessionStorage.removeItem(PASSCODE_KEY); }
+    catch (err) { /* ignore */ }
+  }
+
+  function showGate(){
+    dashboard.hidden = true;
+    gate.hidden = false;
+    gatePasscodeInput.value = '';
+    gatePasscodeInput.focus();
+  }
+
+  function showDashboard(){
+    gate.hidden = true;
+    dashboard.hidden = false;
+  }
+
+  // Wraps fetch() to attach the passcode header to every admin API call and
+  // catch a 401 (wrong/missing passcode, or one that's since been rotated)
+  // by clearing it and dropping back to the gate.
+  function authFetch(url, opts){
+    opts = opts || {};
+    var headers = opts.headers ? Object.assign({}, opts.headers) : {};
+    headers['X-Admin-Passcode'] = getPasscode();
+    opts.headers = headers;
+    return fetch(url, opts).then(function(res){
+      if (res.status === 401){
+        clearPasscode();
+        showGate();
+        gateStatus.textContent = 'Session expired — enter the passcode again.';
+        gateStatus.className = 'status-msg is-error';
+        throw new Error('Unauthorized');
+      }
+      return res;
+    });
+  }
+
+  gateForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    var code = gatePasscodeInput.value;
+    if (!code) return;
+
+    gateSubmitBtn.disabled = true;
+    gateStatus.textContent = 'Checking…';
+    gateStatus.className = 'status-msg';
+
+    fetch('/admin/api/projects', { headers: { 'Accept': 'application/json', 'X-Admin-Passcode': code } })
+      .then(function(res){
+        if (res.status === 401){
+          throw new Error('Incorrect passcode.');
+        }
+        if (!res.ok){
+          throw new Error('Request failed (' + res.status + ').');
+        }
+        return res.json();
+      })
+      .then(function(data){
+        setPasscode(code);
+        gateStatus.textContent = '';
+        showDashboard();
+        projects = Array.isArray(data) ? data : [];
+        renderList();
+      })
+      .catch(function(err){
+        gateStatus.textContent = err.message || 'Could not verify passcode.';
+        gateStatus.className = 'status-msg is-error';
+      })
+      .finally(function(){
+        gateSubmitBtn.disabled = false;
+      });
+  });
+
+  logoutBtn.addEventListener('click', function(){
+    clearPasscode();
+    showGate();
+  });
 
   var form = document.getElementById('projectForm');
   var listContainer = document.getElementById('listContainer');
@@ -301,7 +436,7 @@
 
   function loadProjects(){
     listContainer.innerHTML = '<div class="loading-state">Loading projects…</div>';
-    fetch('/admin/api/projects', { headers: { 'Accept': 'application/json' } })
+    authFetch('/admin/api/projects', { headers: { 'Accept': 'application/json' } })
       .then(function(res){
         if (!res.ok) throw new Error('Request failed (' + res.status + ')');
         return res.json();
@@ -337,7 +472,7 @@
     } else if (btn.getAttribute('data-action') === 'delete'){
       if (!window.confirm('Remove "' + project.title + '"? This can\'t be undone.')) return;
       btn.disabled = true;
-      fetch('/admin/api/projects?id=' + encodeURIComponent(id), { method: 'DELETE' })
+      authFetch('/admin/api/projects?id=' + encodeURIComponent(id), { method: 'DELETE' })
         .then(function(res){ if (!res.ok) throw new Error('Delete failed (' + res.status + ')'); })
         .then(function(){
           projects = projects.filter(function(p){ return p.id !== id; });
@@ -375,7 +510,7 @@
     var isEdit = !!editingId;
     if (isEdit) payload.id = editingId;
 
-    fetch('/admin/api/projects', {
+    authFetch('/admin/api/projects', {
       method: isEdit ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -404,7 +539,15 @@
       });
   });
 
-  loadProjects();
+  // On load: if this tab already has a passcode from earlier in the session,
+  // skip straight to the dashboard (authFetch will bounce back to the gate
+  // if it's since been rotated or was never valid). Otherwise show the gate.
+  if (getPasscode()){
+    showDashboard();
+    loadProjects();
+  } else {
+    showGate();
+  }
 })();
 </script>
 </body>
