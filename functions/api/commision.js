@@ -41,7 +41,6 @@ export async function onRequestPost(context) {
   const name = (data.name || '').toString().slice(0, 200);
   const discord = (data.discord || '').toString().slice(0, 200);
   const type = (data.type || '').toString().slice(0, 200);
-  const budget = (data.budget || 'Not specified').toString().slice(0, 200);
   const details = (data.details || '').toString().slice(0, 1500);
 
   if (!name || !discord || !type || !details) {
@@ -60,9 +59,12 @@ export async function onRequestPost(context) {
           { name: 'Name / IGN', value: name, inline: true },
           { name: 'Discord', value: discord, inline: true },
           { name: 'Project type', value: type, inline: true },
-          { name: 'Budget', value: budget, inline: true },
           { name: 'Details', value: details },
         ],
+        // The "Discord" field above is what staff search by to find this
+        // person and open a ticket — see docs/discord-ticket-workflow.md
+        // for the manual create-ticket / add-member steps.
+        footer: { text: 'Manual workflow: create a ticket and add this person by their Discord tag above.' },
         timestamp: new Date().toISOString(),
       },
     ],
@@ -75,6 +77,11 @@ export async function onRequestPost(context) {
   });
 
   if (!discordRes.ok) {
+    // Logged to this Function's Cloudflare logs (Pages project -> your
+    // deployment -> Functions -> Real-time Logs / Logs tab) — check here
+    // first if submissions are failing silently on the site.
+    const discordBody = await discordRes.text().catch(function () { return ''; });
+    console.error('Discord webhook rejected the message:', discordRes.status, discordBody);
     return new Response(
       JSON.stringify({ error: 'Discord rejected the message.' }),
       { status: 502, headers: { 'Content-Type': 'application/json' } }
