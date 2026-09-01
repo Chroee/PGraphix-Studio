@@ -344,6 +344,18 @@
     background-size:18px 18px;}
   .art-siren .art-bg{background:radial-gradient(circle at 32% 50%, rgba(255,92,122,.35), transparent 55%),radial-gradient(circle at 68% 50%, rgba(34,211,255,.4), transparent 55%),var(--surface-2);}
   .art-media .art-bg{background:linear-gradient(160deg, var(--surface-3), var(--surface-2));}
+  .card-icon{color:var(--accent);opacity:.9;padding:22%;}
+  .card-initials{
+    position:relative;font-family:var(--font-display);font-weight:700;font-size:2.1rem;
+    color:var(--text);letter-spacing:.04em;
+  }
+  .card-art img{width:100%;height:100%;object-fit:cover;}
+
+  .work-state{
+    grid-column:1/-1;padding:56px 20px;text-align:center;color:var(--text-muted);
+    font-family:var(--font-mono);font-size:.85rem;border:1px dashed var(--line);border-radius:var(--radius);
+  }
+  .work-state.is-error{color:var(--danger);border-color:rgba(255,92,122,.35);}
 
   /* ============ ABOUT / TEAM ============ */
   .about-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:64px;align-items:start;}
@@ -484,6 +496,9 @@
   <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3 5 14h6l-1 7 9-12h-6z" fill="currentColor"/></symbol>
   <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.9 6.3.7-4.7 4.4 1.2 6.3L12 17.2 6.5 20.3l1.2-6.3-4.7-4.4 6.3-.7z" fill="currentColor"/></symbol>
+  <symbol id="i-car-outline" viewBox="0 0 220 140"><rect x="34" y="66" width="152" height="34" rx="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M62 66 82 42h56l20 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="70" cy="102" r="12" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".6"/><circle cx="150" cy="102" r="12" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".6"/></symbol>
+  <symbol id="i-siren-bar" viewBox="0 0 200 100"><rect x="20" y="34" width="160" height="32" rx="6" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5"/><rect x="26" y="40" width="16" height="20" fill="currentColor" opacity=".85"/><rect x="46" y="40" width="16" height="20" fill="currentColor" opacity=".4"/><rect x="66" y="40" width="16" height="20" fill="currentColor" opacity=".85"/><rect x="86" y="40" width="16" height="20" fill="currentColor" opacity=".4"/><rect x="106" y="40" width="16" height="20" fill="currentColor" opacity=".85"/><rect x="126" y="40" width="16" height="20" fill="currentColor" opacity=".4"/><rect x="146" y="40" width="16" height="20" fill="currentColor" opacity=".85"/><rect x="158" y="40" width="16" height="20" fill="currentColor" opacity=".4"/></symbol>
+  <symbol id="i-logo-ring" viewBox="0 0 200 150"><circle cx="100" cy="75" r="46" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".35"/><circle cx="100" cy="75" r="34" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 6"/></symbol>
 </svg>
 
 <header class="nav" id="siteNav">
@@ -626,7 +641,7 @@
           <p class="eyebrow">Selected work</p>
           <h2>A sample of what we build.</h2>
         </div>
-        <p>Filter by discipline. Artwork tiles below are placeholder compositions standing in for real renders and photography — swap them for finished pieces from the studio's own project archive.</p>
+        <p>Filter by discipline. Projects load live from the studio's own archive — pieces without an uploaded image show a placeholder treatment until real artwork is added.</p>
       </div>
 
       <div class="filter-row" id="filterRow" role="tablist" aria-label="Filter portfolio by category">
@@ -638,168 +653,8 @@
         <button class="filter-pill" data-filter="media" role="tab" aria-selected="false">Media</button>
       </div>
 
-      <div class="work-grid" id="workGrid">
-
-        <article class="work-card" data-category="logos">
-          <div class="card-art art-logo"><div class="art-bg"></div>
-            <svg viewBox="0 0 200 150" aria-hidden="true">
-              <circle cx="100" cy="75" r="46" fill="none" stroke="var(--line)" stroke-width="1.5"/>
-              <circle cx="100" cy="75" r="34" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 6"/>
-              <text x="100" y="84" text-anchor="middle" font-family="Chakra Petch, sans-serif" font-size="30" font-weight="700" fill="var(--text)">EC</text>
-            </svg>
-            <span class="card-cat">Logo</span>
-          </div>
-          <div class="card-body">
-            <h3>Primary Wordmark &amp; Badge</h3>
-            <span class="card-client">Client — Emerald City RP</span>
-            <div class="card-meta"><span><b>Format</b>SVG / PNG</span><span><b>Concepts</b>3 delivered</span><span><b>Revisions</b>2 rounds</span></div>
-          </div>
-        </article>
-
-        <article class="work-card" data-category="liveries">
-          <div class="card-art art-livery"><div class="art-bg"></div><span class="card-cat">Livery</span></div>
-          <div class="card-body">
-            <h3>Patrol Fleet Livery</h3>
-            <span class="card-client">Client — Redwood County SO</span>
-            <div class="card-meta"><span><b>Vehicles</b>4 units</span><span><b>Template</b>Vanilla-ready</span><span><b>Files</b>PSD + PNG</span></div>
-          </div>
-        </article>
-
-        <article class="work-card" data-category="vehicles">
-          <div class="card-art art-vehicle"><div class="art-bg"></div>
-            <svg viewBox="0 0 220 140" aria-hidden="true">
-              <rect x="34" y="66" width="152" height="34" rx="8" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
-              <path d="M62 66 82 42h56l20 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linejoin="round"/>
-              <circle cx="70" cy="102" r="12" fill="none" stroke="var(--text-muted)" stroke-width="1.6"/>
-              <circle cx="150" cy="102" r="12" fill="none" stroke="var(--text-muted)" stroke-width="1.6"/>
-            </svg>
-            <span class="card-cat">Vehicle</span>
-          </div>
-          <div class="card-body">
-            <h3>Interceptor Build Pack</h3>
-            <span class="card-client">Client — Redwood County SO</span>
-            <div class="card-meta"><span><b>Angles</b>6 renders</span><span><b>Livery</b>Integrated</span><span><b>Export</b>Server-ready</span></div>
-          </div>
-        </article>
-
-        <article class="work-card" data-category="sirens">
-          <div class="card-art art-siren"><div class="art-bg"></div>
-            <svg viewBox="0 0 200 100" aria-hidden="true">
-              <rect x="20" y="34" width="160" height="32" rx="6" fill="var(--ink-2)" stroke="var(--line)" stroke-width="1.5"/>
-              <rect x="26" y="40" width="16" height="20" fill="var(--danger)" opacity=".85"/>
-              <rect x="46" y="40" width="16" height="20" fill="var(--accent)" opacity=".85"/>
-              <rect x="66" y="40" width="16" height="20" fill="var(--danger)" opacity=".55"/>
-              <rect x="86" y="40" width="16" height="20" fill="var(--accent)" opacity=".55"/>
-              <rect x="106" y="40" width="16" height="20" fill="var(--danger)" opacity=".85"/>
-              <rect x="126" y="40" width="16" height="20" fill="var(--accent)" opacity=".85"/>
-              <rect x="146" y="40" width="16" height="20" fill="var(--danger)" opacity=".55"/>
-              <rect x="158" y="40" width="16" height="20" fill="var(--accent)" opacity=".55"/>
-            </svg>
-            <span class="card-cat">Siren</span>
-          </div>
-          <div class="card-body">
-            <h3>Multi-Siren Lightbar Configuration</h3>
-            <span class="card-client">Client — Redwood County SO</span>
-            <div class="card-meta"><span><b>Patterns</b>12 modes</span><span><b>Sync</b>Livery-matched</span><span><b>Files</b>Meta / XML</span></div>
-          </div>
-        </article>
-
-        <article class="work-card" data-category="logos">
-          <div class="card-art art-logo"><div class="art-bg"></div>
-            <svg viewBox="0 0 200 150" aria-hidden="true">
-              <rect x="60" y="40" width="80" height="70" rx="4" fill="none" stroke="var(--line)" stroke-width="1.5" transform="rotate(6 100 75)"/>
-              <text x="100" y="84" text-anchor="middle" font-family="Chakra Petch, sans-serif" font-size="28" font-weight="700" fill="var(--accent)">SN</text>
-            </svg>
-            <span class="card-cat">Logo</span>
-          </div>
-          <div class="card-body">
-            <h3>Nightlife Logo Suite</h3>
-            <span class="card-client">Client — Sapphire Nights</span>
-            <div class="card-meta"><span><b>Format</b>SVG / PNG</span><span><b>Variants</b>Light + dark</span><span><b>Extras</b>Menu emblem</span></div>
-          </div>
-        </article>
-
-        <article class="work-card" data-category="liveries">
-          <div class="card-art art-livery"><div class="art-bg"></div><span class="card-cat">Livery</span></div>
-          <div class="card-body">
-            <h3>GT Series Race Wrap</h3>
-            <span class="card-client">Client — Vantage Racing League</span>
-            <div class="card-meta"><span><b>Vehicles</b>1 body kit</span><span><b>Sponsors</b>6 plates</span><span><b>Files</b>PSD + PNG</span></div>
-          </div>
-        </article>
-
-        <article class="work-card" data-category="media">
-          <div class="card-art art-media"><div class="art-bg"></div>
-            <svg width="46" height="46" style="color:var(--accent)"><use href="#i-play"/></svg>
-            <span class="card-cat">Media</span>
-          </div>
-          <div class="card-body">
-            <h3>Race Day Recap Edit</h3>
-            <span class="card-client">Client — Vantage Racing League</span>
-            <div class="card-meta"><span><b>Length</b>2:40 edit</span><span><b>Format</b>1080p / 60fps</span><span><b>Delivery</b>MP4</span></div>
-          </div>
-        </article>
-
-        <article class="work-card" data-category="vehicles">
-          <div class="card-art art-vehicle"><div class="art-bg"></div>
-            <svg viewBox="0 0 220 140" aria-hidden="true">
-              <rect x="30" y="70" width="160" height="30" rx="7" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
-              <path d="M58 70 76 48h68l18 22" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linejoin="round"/>
-              <circle cx="66" cy="104" r="11" fill="none" stroke="var(--text-muted)" stroke-width="1.6"/>
-              <circle cx="154" cy="104" r="11" fill="none" stroke="var(--text-muted)" stroke-width="1.6"/>
-            </svg>
-            <span class="card-cat">Vehicle</span>
-          </div>
-          <div class="card-body">
-            <h3>GT86 Full Build</h3>
-            <span class="card-client">Client — Vantage Racing League</span>
-            <div class="card-meta"><span><b>Angles</b>8 renders</span><span><b>Livery</b>Integrated</span><span><b>Export</b>Server-ready</span></div>
-          </div>
-        </article>
-
-        <article class="work-card" data-category="sirens">
-          <div class="card-art art-siren"><div class="art-bg"></div>
-            <svg viewBox="0 0 200 100" aria-hidden="true">
-              <rect x="20" y="34" width="160" height="32" rx="6" fill="var(--ink-2)" stroke="var(--line)" stroke-width="1.5"/>
-              <rect x="26" y="40" width="16" height="20" fill="var(--danger)" opacity=".7"/>
-              <rect x="46" y="40" width="16" height="20" fill="var(--danger)" opacity=".95"/>
-              <rect x="66" y="40" width="16" height="20" fill="var(--accent)" opacity=".4"/>
-              <rect x="86" y="40" width="16" height="20" fill="var(--accent)" opacity=".95"/>
-              <rect x="106" y="40" width="16" height="20" fill="var(--accent)" opacity=".95"/>
-              <rect x="126" y="40" width="16" height="20" fill="var(--accent)" opacity=".4"/>
-              <rect x="146" y="40" width="16" height="20" fill="var(--danger)" opacity=".95"/>
-              <rect x="158" y="40" width="16" height="20" fill="var(--danger)" opacity=".7"/>
-            </svg>
-            <span class="card-cat">Siren</span>
-          </div>
-          <div class="card-body">
-            <h3>Cab Light Package</h3>
-            <span class="card-client">Client — Metro Fire &amp; Rescue</span>
-            <div class="card-meta"><span><b>Patterns</b>8 modes</span><span><b>Sync</b>Livery-matched</span><span><b>Files</b>Meta / XML</span></div>
-          </div>
-        </article>
-
-        <article class="work-card" data-category="media">
-          <div class="card-art art-media"><div class="art-bg"></div>
-            <svg width="46" height="46" style="color:var(--accent)"><use href="#i-camera"/></svg>
-            <span class="card-cat">Media</span>
-          </div>
-          <div class="card-body">
-            <h3>Server Launch Trailer</h3>
-            <span class="card-client">Client — Emerald City RP</span>
-            <div class="card-meta"><span><b>Length</b>1:15 trailer</span><span><b>Format</b>1080p / 60fps</span><span><b>Delivery</b>MP4</span></div>
-          </div>
-        </article>
-
-        <article class="work-card" data-category="liveries">
-          <div class="card-art art-livery"><div class="art-bg"></div><span class="card-cat">Livery</span></div>
-          <div class="card-body">
-            <h3>Fleet Cab Livery</h3>
-            <span class="card-client">Client — Skyline Cab Co.</span>
-            <div class="card-meta"><span><b>Vehicles</b>3 units</span><span><b>Template</b>Vanilla-ready</span><span><b>Files</b>PSD + PNG</span></div>
-          </div>
-        </article>
-
+      <div class="work-grid" id="workGrid" aria-live="polite">
+        <p class="work-state">Loading portfolio…</p>
       </div>
     </div>
   </section>
@@ -888,6 +743,10 @@
           </div>
         </div>
         <form class="contact-form" id="commissionForm">
+          <div class="visually-hidden" aria-hidden="true">
+            <label for="fWebsite">Leave this field empty</label>
+            <input type="text" id="fWebsite" name="website" tabindex="-1" autocomplete="off">
+          </div>
           <div class="form-row">
             <div class="field">
               <label for="fName">Name / IGN</label>
@@ -928,7 +787,7 @@
           </div>
           <button type="submit" class="btn btn-primary btn-block">Send Commission Request <svg width="16" height="16"><use href="#i-arrow"/></svg></button>
           <p class="form-status" id="formStatus" role="status"></p>
-          <p class="form-note">Submitting opens a pre-filled email to hello@pgraphix.studio — no data leaves your device otherwise.</p>
+          <p class="form-note">Submitting posts straight to the studio's Discord. If that's ever unreachable, it'll fall back to a pre-filled email instead.</p>
         </form>
       </div>
     </div>
@@ -993,28 +852,104 @@
     });
   });
 
-  // Portfolio filtering
+  // Portfolio: loaded live from /api/projects (a Cloudflare Pages Function
+  // backed by KV — see functions/api/projects.js) so pieces added, edited, or
+  // removed from /admin show up here without touching this page's code.
+  var workGrid = document.getElementById('workGrid');
+  var ART_CLASS = { logos:'art-logo', liveries:'art-livery', vehicles:'art-vehicle', sirens:'art-siren', media:'art-media' };
+  var CAT_LABEL = { logos:'Logo', liveries:'Livery', vehicles:'Vehicle', sirens:'Siren', media:'Media' };
+  var PLACEHOLDER_ICON = { vehicles:'#i-car-outline', sirens:'#i-siren-bar', media:'#i-play' };
+
+  function escapeHtml(str){
+    return (str || '').toString().replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  function initials(str){
+    var words = (str || '').trim().split(/\s+/).filter(Boolean);
+    if (!words.length) return '?';
+    if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+    return (words[0][0] + words[1][0]).toUpperCase();
+  }
+
+  function cardArtHtml(p){
+    if (p.imageUrl){
+      return '<img src="' + escapeHtml(p.imageUrl) + '" alt="" loading="lazy">';
+    }
+    if (p.category === 'logos'){
+      return '<svg class="card-icon" viewBox="0 0 200 150" aria-hidden="true"><use href="#i-logo-ring"/></svg><span class="card-initials">' + escapeHtml(initials(p.title)) + '</span>';
+    }
+    if (p.category === 'liveries'){
+      return '';
+    }
+    var icon = PLACEHOLDER_ICON[p.category];
+    return icon ? '<svg class="card-icon" viewBox="' + (p.category === 'sirens' ? '0 0 200 100' : p.category === 'vehicles' ? '0 0 220 140' : '0 0 24 24') + '" aria-hidden="true"><use href="' + icon + '"/></svg>' : '';
+  }
+
+  function cardHtml(p){
+    var metaHtml = (p.meta || []).map(function(m){
+      return '<span><b>' + escapeHtml(m.label) + '</b>' + escapeHtml(m.value) + '</span>';
+    }).join('');
+    return (
+      '<article class="work-card" data-category="' + escapeHtml(p.category) + '">' +
+        '<div class="card-art ' + (ART_CLASS[p.category] || '') + '"><div class="art-bg"></div>' + cardArtHtml(p) +
+          '<span class="card-cat">' + (CAT_LABEL[p.category] || p.category) + '</span></div>' +
+        '<div class="card-body">' +
+          '<h3>' + escapeHtml(p.title) + '</h3>' +
+          '<span class="card-client">Client — ' + escapeHtml(p.client) + '</span>' +
+          (metaHtml ? '<div class="card-meta">' + metaHtml + '</div>' : '') +
+        '</div>' +
+      '</article>'
+    );
+  }
+
+  function renderWork(projects){
+    if (!projects.length){
+      workGrid.innerHTML = '<p class="work-state">No projects published yet — add the first one from the studio\'s admin area.</p>';
+      return;
+    }
+    workGrid.innerHTML = projects.map(cardHtml).join('');
+    applyActiveFilter();
+  }
+
+  function applyActiveFilter(){
+    var active = document.querySelector('.filter-pill.is-active');
+    var f = active ? active.getAttribute('data-filter') : 'all';
+    document.querySelectorAll('.work-card').forEach(function(card){
+      card.hidden = !(f === 'all' || card.getAttribute('data-category') === f);
+    });
+  }
+
+  fetch('/api/projects', { headers: { 'Accept': 'application/json' } })
+    .then(function(res){ if (!res.ok) throw new Error('status ' + res.status); return res.json(); })
+    .then(function(data){ renderWork(Array.isArray(data) ? data : []); })
+    .catch(function(){
+      workGrid.innerHTML = '<p class="work-state is-error">Couldn\'t load the portfolio right now. If you\'re viewing a preview of this page rather than the deployed site, this is expected — /api/projects only responds on the live Cloudflare Pages deployment.</p>';
+    });
+
+  // Portfolio filtering — re-queries cards fresh each click so it works
+  // regardless of whether the fetch above has finished rendering yet.
   var pills = document.querySelectorAll('.filter-pill');
-  var cards = document.querySelectorAll('.work-card');
   pills.forEach(function(pill){
     pill.addEventListener('click', function(){
       pills.forEach(function(p){ p.classList.remove('is-active'); p.setAttribute('aria-selected','false'); });
       pill.classList.add('is-active');
       pill.setAttribute('aria-selected','true');
-      var f = pill.getAttribute('data-filter');
-      cards.forEach(function(card){
-        var show = (f === 'all') || (card.getAttribute('data-category') === f);
-        card.hidden = !show;
-      });
+      applyActiveFilter();
     });
   });
 
-  // Commission form -> mailto (no backend attached; fully client-side)
+  // Commission form -> posts to the studio's Discord via a Cloudflare Pages
+  // Function at /api/commission (see functions/api/commission.js), which holds
+  // the webhook URL server-side so it never appears in this page's source.
+  // Falls back to a pre-filled email if that endpoint can't be reached — e.g.
+  // when this page is previewed somewhere other than the deployed site.
   var form = document.getElementById('commissionForm');
   var status = document.getElementById('formStatus');
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    var data = new FormData(form);
+  var submitBtn = form.querySelector('button[type="submit"]');
+
+  function mailtoFallback(data){
     var subject = 'Commission Request — ' + (data.get('type') || 'General');
     var bodyLines = [
       'Name / IGN: ' + data.get('name'),
@@ -1025,9 +960,39 @@
       'Details:',
       data.get('details')
     ];
-    var mailto = 'mailto:hello@pgraphix.studio?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyLines.join('\n'));
-    window.location.href = mailto;
-    status.textContent = 'Opening your email client to send this request…';
+    return 'mailto:hello@pgraphix.studio?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyLines.join('\n'));
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var data = new FormData(form);
+
+    // Honeypot: real visitors never see or fill this field; bots often do.
+    if (data.get('website')) { return; }
+
+    submitBtn.disabled = true;
+    status.textContent = 'Sending to the studio…';
+
+    fetch('/api/commission', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: data.get('name'),
+        discord: data.get('discord'),
+        type: data.get('type'),
+        budget: data.get('budget'),
+        details: data.get('details')
+      })
+    }).then(function(res){
+      if (!res.ok) { throw new Error('request failed'); }
+      status.textContent = 'Sent — we\'ll follow up on Discord shortly.';
+      form.reset();
+    }).catch(function(){
+      status.textContent = 'Couldn\'t reach Discord — opening a pre-filled email instead.';
+      window.location.href = mailtoFallback(data);
+    }).finally(function(){
+      submitBtn.disabled = false;
+    });
   });
 })();
 </script>
