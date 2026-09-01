@@ -424,6 +424,7 @@
   .field textarea{resize:vertical;min-height:100px;}
   .form-note{font-size:.78rem;color:var(--text-faint);}
   .form-status{font-family:var(--font-mono);font-size:.8rem;color:var(--accent);min-height:1.2em;}
+  .form-status.is-error{color:var(--danger);}
 
   /* ============ FOOTER ============ */
   footer{border-top:1px solid var(--line-soft);padding-block:44px;}
@@ -757,37 +758,25 @@
               <input id="fDiscord" name="discord" type="text" placeholder="username" required>
             </div>
           </div>
-          <div class="form-row">
-            <div class="field">
-              <label for="fType">Project type</label>
-              <select id="fType" name="type" required>
-                <option value="">Select one</option>
-                <option>Logo Design</option>
-                <option>Vehicle Livery</option>
-                <option>Vehicle Pack</option>
-                <option>Multi-Siren Config</option>
-                <option>Media &amp; Editing</option>
-                <option>Full Brand System</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="fBudget">Budget range</label>
-              <select id="fBudget" name="budget">
-                <option value="">Not sure yet</option>
-                <option>$15–$40</option>
-                <option>$40–$100</option>
-                <option>$100–$250</option>
-                <option>$250+</option>
-              </select>
-            </div>
+          <div class="field">
+            <label for="fType">Project type</label>
+            <select id="fType" name="type" required>
+              <option value="">Select one</option>
+              <option>Logo Design</option>
+              <option>Vehicle Livery</option>
+              <option>Vehicle Pack</option>
+              <option>Multi-Siren Config</option>
+              <option>Media &amp; Editing</option>
+              <option>Full Brand System</option>
+            </select>
           </div>
           <div class="field">
-            <label for="fDetails">Tell us about the project</label>
+            <label for="fDetails">What are you looking for?</label>
             <textarea id="fDetails" name="details" placeholder="Server name, references, vehicle models, timeline…" required></textarea>
           </div>
-          <button type="submit" class="btn btn-primary btn-block">Send Commission Request <svg width="16" height="16"><use href="#i-arrow"/></svg></button>
+          <button type="submit" class="btn btn-primary btn-block">Request a Quote <svg width="16" height="16"><use href="#i-arrow"/></svg></button>
           <p class="form-status" id="formStatus" role="status"></p>
-          <p class="form-note">Submitting posts straight to the studio's Discord. If that's ever unreachable, it'll fall back to a pre-filled email instead.</p>
+          <p class="form-note">Submitting posts straight to the studio's Discord — we'll follow up with a quote there.</p>
         </form>
       </div>
     </div>
@@ -943,25 +932,13 @@
   // Commission form -> posts to the studio's Discord via a Cloudflare Pages
   // Function at /api/commission (see functions/api/commission.js), which holds
   // the webhook URL server-side so it never appears in this page's source.
-  // Falls back to a pre-filled email if that endpoint can't be reached — e.g.
-  // when this page is previewed somewhere other than the deployed site.
+  // No email fallback on purpose: if the endpoint can't be reached (e.g. this
+  // page is previewed somewhere other than the deployed site, or the webhook
+  // isn't configured yet), the visitor sees a plain error instead of their
+  // email client being opened for them.
   var form = document.getElementById('commissionForm');
   var status = document.getElementById('formStatus');
   var submitBtn = form.querySelector('button[type="submit"]');
-
-  function mailtoFallback(data){
-    var subject = 'Commission Request — ' + (data.get('type') || 'General');
-    var bodyLines = [
-      'Name / IGN: ' + data.get('name'),
-      'Discord: ' + data.get('discord'),
-      'Project type: ' + data.get('type'),
-      'Budget range: ' + (data.get('budget') || 'Not specified'),
-      '',
-      'Details:',
-      data.get('details')
-    ];
-    return 'mailto:hello@pgraphix.studio?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyLines.join('\n'));
-  }
 
   form.addEventListener('submit', function(e){
     e.preventDefault();
@@ -971,6 +948,7 @@
     if (data.get('website')) { return; }
 
     submitBtn.disabled = true;
+    status.classList.remove('is-error');
     status.textContent = 'Sending to the studio…';
 
     fetch('/api/commission', {
@@ -980,7 +958,6 @@
         name: data.get('name'),
         discord: data.get('discord'),
         type: data.get('type'),
-        budget: data.get('budget'),
         details: data.get('details')
       })
     }).then(function(res){
@@ -988,8 +965,8 @@
       status.textContent = 'Sent — we\'ll follow up on Discord shortly.';
       form.reset();
     }).catch(function(){
-      status.textContent = 'Couldn\'t reach Discord — opening a pre-filled email instead.';
-      window.location.href = mailtoFallback(data);
+      status.classList.add('is-error');
+      status.textContent = 'Something went wrong sending this — please message us on Discord directly instead.';
     }).finally(function(){
       submitBtn.disabled = false;
     });
