@@ -393,15 +393,15 @@
 
   /* ============ CONTACT ============ */
   .contact-panel{
-    display:grid;grid-template-columns:.85fr 1.15fr;gap:0;
     background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
   }
+  .contact-panel-solo{max-width:640px;margin-inline:auto;}
   .contact-side{
-    padding:44px 40px;background:linear-gradient(165deg, rgba(0,0,138,.4), rgba(4,202,255,.06));
+    padding:48px 44px;background:linear-gradient(165deg, rgba(0,0,138,.4), rgba(4,202,255,.06));
     display:flex;flex-direction:column;gap:26px;
   }
   .contact-side h2{font-size:var(--fs-2xl);}
-  .contact-side p{color:var(--text-muted);max-width:36ch;}
+  .contact-side p{color:var(--text-muted);max-width:42ch;}
   .contact-links{display:flex;flex-direction:column;gap:12px;}
   .contact-link{
     display:flex;align-items:center;gap:12px;
@@ -411,20 +411,6 @@
   }
   .contact-link:hover{border-color:var(--accent);background:rgba(34,211,255,.06);}
   .contact-link svg{width:18px;height:18px;color:var(--accent);flex-shrink:0;}
-  .contact-form{padding:44px 40px;display:flex;flex-direction:column;gap:18px;}
-  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .field{display:flex;flex-direction:column;gap:8px;}
-  .field label{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);}
-  .field input,.field select,.field textarea{
-    background:var(--surface-2);border:1px solid var(--line);border-radius:9px;
-    padding:12px 14px;color:var(--text);font-size:.92rem;
-    transition:border-color .2s var(--ease);
-  }
-  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);outline:none;}
-  .field textarea{resize:vertical;min-height:100px;}
-  .form-note{font-size:.78rem;color:var(--text-faint);}
-  .form-status{font-family:var(--font-mono);font-size:.8rem;color:var(--accent);min-height:1.2em;}
-  .form-status.is-error{color:var(--danger);}
 
   /* ============ FOOTER ============ */
   footer{border-top:1px solid var(--line-soft);padding-block:44px;}
@@ -457,7 +443,6 @@
     .team-grid{grid-template-columns:repeat(2,1fr);}
     .work-grid{grid-template-columns:repeat(2,1fr);}
     .testi-grid{grid-template-columns:1fr 1fr;}
-    .contact-panel{grid-template-columns:1fr;}
     .process{grid-template-columns:1fr 1fr;}
   }
   @media (max-width: 720px){
@@ -478,8 +463,7 @@
     .testi-grid{grid-template-columns:1fr;}
     .team-grid{grid-template-columns:1fr;}
     .process{grid-template-columns:1fr;}
-    .form-row{grid-template-columns:1fr;}
-    .contact-side,.contact-form{padding:32px 24px;}
+    .contact-side{padding:32px 24px;}
     .footer-row{flex-direction:column;align-items:flex-start;}
   }
 </style>
@@ -731,53 +715,18 @@
   <!-- ============ CONTACT ============ -->
   <section id="contact">
     <div class="container">
-      <div class="contact-panel">
+      <div class="contact-panel contact-panel-solo">
         <div class="contact-side">
           <div>
             <p class="eyebrow">Get in touch</p>
             <h2 style="margin-top:14px;">Let's brand your server.</h2>
           </div>
-          <p>Fastest way to reach us is Discord — send a brief and any references and we'll scope it from there. Prefer email or the form? Both work too.</p>
+          <p>Send a brief and any references on Discord and we'll scope it and follow up with a quote from there — or reach us by email if you'd rather.</p>
           <div class="contact-links">
             <a class="contact-link" href="https://discord.gg/pgfx" id="discordLink"><svg><use href="#i-discord"/></svg> discord.gg/pgfx — join &amp; open a ticket</a>
             <a class="contact-link" href="mailto:hello@pgraphix.studio"><svg><use href="#i-mail"/></svg> hello@pgraphix.studio</a>
           </div>
         </div>
-        <form class="contact-form" id="commissionForm">
-          <div class="visually-hidden" aria-hidden="true">
-            <label for="fWebsite">Leave this field empty</label>
-            <input type="text" id="fWebsite" name="website" tabindex="-1" autocomplete="off">
-          </div>
-          <div class="form-row">
-            <div class="field">
-              <label for="fName">Name / IGN</label>
-              <input id="fName" name="name" type="text" required autocomplete="name">
-            </div>
-            <div class="field">
-              <label for="fDiscord">Discord tag</label>
-              <input id="fDiscord" name="discord" type="text" placeholder="username" required>
-            </div>
-          </div>
-          <div class="field">
-            <label for="fType">Project type</label>
-            <select id="fType" name="type" required>
-              <option value="">Select one</option>
-              <option>Logo Design</option>
-              <option>Vehicle Livery</option>
-              <option>Vehicle Pack</option>
-              <option>Multi-Siren Config</option>
-              <option>Media &amp; Editing</option>
-              <option>Full Brand System</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="fDetails">What are you looking for?</label>
-            <textarea id="fDetails" name="details" placeholder="Server name, references, vehicle models, timeline…" required></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary btn-block">Request a Quote <svg width="16" height="16"><use href="#i-arrow"/></svg></button>
-          <p class="form-status" id="formStatus" role="status"></p>
-          <p class="form-note">Submitting posts straight to the studio's Discord — we'll follow up with a quote there.</p>
-        </form>
       </div>
     </div>
   </section>
@@ -929,48 +878,6 @@
     });
   });
 
-  // Commission form -> posts to the studio's Discord via a Cloudflare Pages
-  // Function at /api/commission (see functions/api/commission.js), which holds
-  // the webhook URL server-side so it never appears in this page's source.
-  // No email fallback on purpose: if the endpoint can't be reached (e.g. this
-  // page is previewed somewhere other than the deployed site, or the webhook
-  // isn't configured yet), the visitor sees a plain error instead of their
-  // email client being opened for them.
-  var form = document.getElementById('commissionForm');
-  var status = document.getElementById('formStatus');
-  var submitBtn = form.querySelector('button[type="submit"]');
-
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    var data = new FormData(form);
-
-    // Honeypot: real visitors never see or fill this field; bots often do.
-    if (data.get('website')) { return; }
-
-    submitBtn.disabled = true;
-    status.classList.remove('is-error');
-    status.textContent = 'Sending to the studio…';
-
-    fetch('/api/commission', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: data.get('name'),
-        discord: data.get('discord'),
-        type: data.get('type'),
-        details: data.get('details')
-      })
-    }).then(function(res){
-      if (!res.ok) { throw new Error('request failed'); }
-      status.textContent = 'Sent — we\'ll follow up on Discord shortly.';
-      form.reset();
-    }).catch(function(){
-      status.classList.add('is-error');
-      status.textContent = 'Something went wrong sending this — please message us on Discord directly instead.';
-    }).finally(function(){
-      submitBtn.disabled = false;
-    });
-  });
 })();
 </script>
 </body>
