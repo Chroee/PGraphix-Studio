@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PGraphix Studio</title>
 <meta name="color-scheme" content="dark">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -378,7 +378,7 @@
   /* ============ TESTIMONIALS ============ */
   .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
   .testi-card{
-    background:var(--surface);border:1px dashed var(--line);border-radius:var(--radius);
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
     padding:26px;display:flex;flex-direction:column;gap:16px;
   }
   .testi-stars{display:flex;gap:4px;color:var(--accent);}
@@ -386,10 +386,6 @@
   .testi-who{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--line-soft);}
   .testi-who b{display:block;font-size:.86rem;color:var(--text);}
   .testi-who span{font-family:var(--font-mono);font-size:.7rem;color:var(--text-faint);}
-  .testi-slot-badge{
-    align-self:flex-start;font-family:var(--font-mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--text-faint);border:1px solid var(--line);padding:3px 8px;border-radius:999px;
-  }
 
   /* ============ CONTACT ============ */
   .contact-panel{
@@ -469,6 +465,7 @@
 </style>
 </head>
 <body>
+
 <div class="grid-glow" aria-hidden="true"></div>
 
 <svg class="visually-hidden" aria-hidden="true">
@@ -685,28 +682,25 @@
       <div class="section-head">
         <div>
           <p class="eyebrow">Client reviews</p>
-          <h2>What servers say — soon.</h2>
+          <h2>What servers say.</h2>
         </div>
-        <p>These are template slots, not real quotes. Swap each one for an actual client review once the studio starts collecting them.</p>
+        <p>Straight from Discord — real requests, real deliveries.</p>
       </div>
       <div class="testi-grid">
         <div class="testi-card">
-          <span class="testi-slot-badge">Review slot 01</span>
           <div class="testi-stars" aria-hidden="true"><svg width="16" height="16"><use href="#i-star"/></svg><svg width="16" height="16"><use href="#i-star"/></svg><svg width="16" height="16"><use href="#i-star"/></svg><svg width="16" height="16"><use href="#i-star"/></svg><svg width="16" height="16"><use href="#i-star"/></svg></div>
-          <p class="testi-quote">This is where a client's own words about working with PGraphix Studio will go — what they asked for, and how the delivery landed.</p>
-          <div class="testi-who"><div><b>Client Name</b><span>Server / Community</span></div></div>
+          <p class="testi-quote">Solid livery work, same day delivery — the FiveM version of Amazon Prime.</p>
+          <div class="testi-who"><div><b>Billy Goat</b><span>New Republic Roleplay</span></div></div>
         </div>
         <div class="testi-card">
-          <span class="testi-slot-badge">Review slot 02</span>
           <div class="testi-stars" aria-hidden="true"><svg width="16" height="16"><use href="#i-star"/></svg><svg width="16" height="16"><use href="#i-star"/></svg><svg width="16" height="16"><use href="#i-star"/></svg><svg width="16" height="16"><use href="#i-star"/></svg><svg width="16" height="16"><use href="#i-star"/></svg></div>
-          <p class="testi-quote">Add a quote about turnaround time, communication, or how a specific package (livery, siren config, media edit) turned out.</p>
-          <div class="testi-who"><div><b>Client Name</b><span>Server / Community</span></div></div>
+          <p class="testi-quote">Created liveries exactly how I requested them to be! Great work!</p>
+          <div class="testi-who"><div><b>texas177</b><span>Gulf Coast Roleplay</span></div></div>
         </div>
         <div class="testi-card">
-          <span class="testi-slot-badge">Review slot 03</span>
           <div class="testi-stars" aria-hidden="true"><svg width="16" height="16"><use href="#i-star"/></svg><svg width="16" height="16"><use href="#i-star"/></svg><svg width="16" height="16"><use href="#i-star"/></svg><svg width="16" height="16"><use href="#i-star"/></svg><svg width="16" height="16"><use href="#i-star"/></svg></div>
-          <p class="testi-quote">A third slot for a repeat client or a larger bundle commission — the full brand system package is a good fit here.</p>
-          <div class="testi-who"><div><b>Client Name</b><span>Server / Community</span></div></div>
+          <p class="testi-quote">ISP-inspired liveries — very well made, and willing to do hood lines!</p>
+          <div class="testi-who"><div><b>Gump</b></div></div>
         </div>
       </div>
     </div>
@@ -880,5 +874,6 @@
 
 })();
 </script>
+
 </body>
 </html>
