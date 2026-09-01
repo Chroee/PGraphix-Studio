@@ -1,1 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PGraphix Studio — Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#05060d; --surface:#0b0e1e; --surface-2:#121729; --surface-3:#182038;
+    --line:#212a47; --line-soft:#161c33;
+    --text:#eceef4; --text-muted:#8b93b3; --text-faint:#535c7c;
+    --accent:#22d3ff; --accent-strong:#04caff; --accent-ink:#001824;
+    --danger:#ff5c7a; --danger-ink:#2a0009;
+    --font-display:'Chakra Petch','Arial Narrow',sans-serif;
+    --font-body:'Manrope',-apple-system,'Segoe UI',sans-serif;
+    --font-mono:'IBM Plex Mono',ui-monospace,'SF Mono',monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--ink);color:var(--text);
+    font-family:var(--font-body);line-height:1.55;-webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.02em;margin:0;}
+  a{color:var(--accent);}
+  button{font:inherit;cursor:pointer;}
+  input,select,textarea{font:inherit;color:inherit;}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 
+  .shell{max-width:1080px;margin-inline:auto;padding:28px clamp(16px,4vw,40px) 80px;}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:8px;padding-bottom:20px;border-bottom:1px solid var(--line-soft);}
+  .top h1{font-size:1.1rem;}
+  .top a.back{font-family:var(--font-mono);font-size:.78rem;color:var(--text-muted);text-decoration:none;letter-spacing:.05em;}
+  .top a.back:hover{color:var(--accent);}
+  .eyebrow{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);}
+
+  .layout{display:grid;grid-template-columns:380px 1fr;gap:28px;margin-top:28px;align-items:start;}
+  @media (max-width:860px){.layout{grid-template-columns:1fr;}}
+
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;}
+  .panel h2{font-size:.95rem;margin-bottom:4px;}
+  .panel-sub{font-size:.82rem;color:var(--text-muted);margin-bottom:18px;}
+
+  form{display:flex;flex-direction:column;gap:14px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;color:var(--text-faint);}
+  .field input,.field select,.field textarea{
+    background:var(--surface-2);border:1px solid var(--line);border-radius:8px;
+    padding:10px 12px;color:var(--text);font-size:.9rem;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);outline:none;}
+  .field textarea{resize:vertical;min-height:64px;}
+  .field-hint{font-size:.74rem;color:var(--text-faint);}
+  .meta-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .meta-rows{display:flex;flex-direction:column;gap:8px;}
+  .meta-rows-label{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;color:var(--text-faint);}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:.5em;
+    font-family:var(--font-mono);font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;
+    padding:11px 18px;border-radius:8px;border:1px solid transparent;transition:all .15s ease;
+  }
+  .btn-primary{background:linear-gradient(135deg,var(--accent),#6794fc 120%);color:var(--accent-ink);font-weight:700;}
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-primary:disabled{opacity:.55;cursor:not-allowed;filter:none;}
+  .btn-ghost{background:transparent;border-color:var(--line);color:var(--text-muted);}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+  .btn-danger{background:transparent;border-color:rgba(255,92,122,.4);color:var(--danger);}
+  .btn-danger:hover{background:rgba(255,92,122,.12);}
+  .btn-row{display:flex;gap:10px;}
+
+  .status-msg{font-family:var(--font-mono);font-size:.78rem;min-height:1.2em;}
+  .status-msg.is-error{color:var(--danger);}
+  .status-msg.is-ok{color:var(--accent);}
+
+  .list-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+  .filter-pills{display:flex;gap:6px;flex-wrap:wrap;}
+  .filter-pill{
+    font-family:var(--font-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;
+    padding:6px 12px;border-radius:999px;border:1px solid var(--line);color:var(--text-muted);background:transparent;
+  }
+  .filter-pill.is-active{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700;}
+  .count-tag{font-family:var(--font-mono);font-size:.76rem;color:var(--text-faint);}
+
+  .project-list{display:flex;flex-direction:column;gap:10px;}
+  .project-row{
+    display:flex;align-items:center;gap:14px;
+    background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+  }
+  .project-thumb{
+    width:52px;height:52px;border-radius:8px;flex-shrink:0;overflow:hidden;
+    background:var(--surface-3);display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);font-size:.8rem;color:var(--text-faint);
+  }
+  .project-thumb img{width:100%;height:100%;object-fit:cover;}
+  .project-info{flex:1;min-width:0;}
+  .project-info h3{font-family:var(--font-body);font-weight:700;font-size:.92rem;text-transform:none;letter-spacing:0;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .project-meta-line{font-family:var(--font-mono);font-size:.72rem;color:var(--text-faint);margin-top:2px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .cat-badge{
+    font-family:var(--font-mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--accent);border:1px solid rgba(34,211,255,.35);border-radius:999px;padding:3px 9px;flex-shrink:0;
+  }
+  .project-actions{display:flex;gap:8px;flex-shrink:0;}
+  .icon-btn{
+    width:32px;height:32px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--text-muted);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .icon-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .icon-btn.danger:hover{border-color:var(--danger);color:var(--danger);}
+  .icon-btn svg{width:15px;height:15px;}
+
+  .empty-state,.loading-state,.error-state{
+    padding:36px 20px;text-align:center;color:var(--text-muted);font-size:.88rem;
+    border:1px dashed var(--line);border-radius:10px;
+  }
+  .error-state{color:var(--danger);border-color:rgba(255,92,122,.3);}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0-1 13a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1L6 7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4l10.5-10.5a1.5 1.5 0 0 0 0-2.1l-1.9-1.9a1.5 1.5 0 0 0-2.1 0L4 16v4Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div class="shell">
+  <div class="top">
+    <div>
+      <p class="eyebrow">PGraphix Studio</p>
+      <h1>Portfolio Admin</h1>
+    </div>
+    <a class="back" href="/">&larr; Back to live site</a>
+  </div>
+
+  <div class="layout">
+    <div class="panel">
+      <h2 id="formTitle">Add a project</h2>
+      <p class="panel-sub" id="formSub">Appears on the site immediately after saving.</p>
+      <form id="projectForm">
+        <input type="hidden" id="fId" value="">
+        <div class="field">
+          <label for="fTitle">Project title</label>
+          <input id="fTitle" required maxlength="120" placeholder="e.g. Patrol Fleet Livery">
+        </div>
+        <div class="field">
+          <label for="fClient">Client / server name</label>
+          <input id="fClient" required maxlength="120" placeholder="e.g. Redwood County SO">
+        </div>
+        <div class="field">
+          <label for="fCategory">Category</label>
+          <select id="fCategory" required>
+            <option value="logos">Logos</option>
+            <option value="liveries">Liveries</option>
+            <option value="vehicles">Vehicles</option>
+            <option value="sirens">Sirens</option>
+            <option value="media">Media</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fImage">Image URL (optional)</label>
+          <input id="fImage" type="url" maxlength="500" placeholder="https://…">
+          <span class="field-hint">Leave blank to show a placeholder treatment instead. Host the image anywhere reachable (Discord CDN link, Imgur, etc.) and paste the direct link.</span>
+        </div>
+        <div class="meta-rows">
+          <span class="meta-rows-label">Details (up to 3, optional)</span>
+          <div class="meta-row"><input id="m0l" maxlength="30" placeholder="Label, e.g. Format"><input id="m0v" maxlength="40" placeholder="Value, e.g. SVG / PNG"></div>
+          <div class="meta-row"><input id="m1l" maxlength="30" placeholder="Label"><input id="m1v" maxlength="40" placeholder="Value"></div>
+          <div class="meta-row"><input id="m2l" maxlength="30" placeholder="Label"><input id="m2v" maxlength="40" placeholder="Value"></div>
+        </div>
+        <div class="btn-row">
+          <button type="submit" class="btn btn-primary" id="submitBtn">Add Project</button>
+          <button type="button" class="btn btn-ghost" id="cancelEditBtn" hidden>Cancel edit</button>
+        </div>
+        <p class="status-msg" id="formStatus" role="status"></p>
+      </form>
+    </div>
+
+    <div class="panel">
+      <div class="list-head">
+        <div class="filter-pills" id="filterPills">
+          <button class="filter-pill is-active" data-filter="all">All</button>
+          <button class="filter-pill" data-filter="logos">Logos</button>
+          <button class="filter-pill" data-filter="liveries">Liveries</button>
+          <button class="filter-pill" data-filter="vehicles">Vehicles</button>
+          <button class="filter-pill" data-filter="sirens">Sirens</button>
+          <button class="filter-pill" data-filter="media">Media</button>
+        </div>
+        <span class="count-tag" id="countTag"></span>
+      </div>
+      <div id="listContainer"><div class="loading-state">Loading projects…</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var CAT_LABEL = { logos:'Logo', liveries:'Livery', vehicles:'Vehicle', sirens:'Siren', media:'Media' };
+  var projects = [];
+  var activeFilter = 'all';
+  var editingId = null;
+
+  var form = document.getElementById('projectForm');
+  var listContainer = document.getElementById('listContainer');
+  var formStatus = document.getElementById('formStatus');
+  var submitBtn = document.getElementById('submitBtn');
+  var cancelEditBtn = document.getElementById('cancelEditBtn');
+  var formTitle = document.getElementById('formTitle');
+  var formSub = document.getElementById('formSub');
+  var countTag = document.getElementById('countTag');
+
+  function escapeHtml(str){
+    return (str || '').toString().replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  function setStatus(msg, kind){
+    formStatus.textContent = msg || '';
+    formStatus.className = 'status-msg' + (kind ? ' is-' + kind : '');
+  }
+
+  function resetForm(){
+    editingId = null;
+    form.reset();
+    document.getElementById('fId').value = '';
+    formTitle.textContent = 'Add a project';
+    formSub.textContent = 'Appears on the site immediately after saving.';
+    submitBtn.textContent = 'Add Project';
+    cancelEditBtn.hidden = true;
+    setStatus('');
+  }
+
+  function startEdit(project){
+    editingId = project.id;
+    document.getElementById('fId').value = project.id;
+    document.getElementById('fTitle').value = project.title;
+    document.getElementById('fClient').value = project.client;
+    document.getElementById('fCategory').value = project.category;
+    document.getElementById('fImage').value = project.imageUrl || '';
+    var meta = project.meta || [];
+    ['m0','m1','m2'].forEach(function(prefix, i){
+      document.getElementById(prefix + 'l').value = meta[i] ? meta[i].label : '';
+      document.getElementById(prefix + 'v').value = meta[i] ? meta[i].value : '';
+    });
+    formTitle.textContent = 'Edit project';
+    formSub.textContent = 'Updating "' + project.title + '".';
+    submitBtn.textContent = 'Save Changes';
+    cancelEditBtn.hidden = false;
+    setStatus('');
+    document.getElementById('fTitle').focus();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function collectMeta(){
+    var out = [];
+    ['m0','m1','m2'].forEach(function(prefix){
+      var l = document.getElementById(prefix + 'l').value.trim();
+      var v = document.getElementById(prefix + 'v').value.trim();
+      if (l || v) out.push({ label: l, value: v });
+    });
+    return out;
+  }
+
+  function renderList(){
+    var filtered = activeFilter === 'all' ? projects : projects.filter(function(p){ return p.category === activeFilter; });
+    countTag.textContent = filtered.length + (filtered.length === 1 ? ' project' : ' projects');
+
+    if (filtered.length === 0){
+      listContainer.innerHTML = '<div class="empty-state">No projects' + (activeFilter === 'all' ? ' yet — add the first one on the left.' : ' in this category yet.') + '</div>';
+      return;
+    }
+
+    listContainer.innerHTML = '<div class="project-list">' + filtered.map(function(p){
+      var thumb = p.imageUrl
+        ? '<img src="' + escapeHtml(p.imageUrl) + '" alt="" loading="lazy">'
+        : escapeHtml((p.title || '?').trim().charAt(0).toUpperCase());
+      var metaLine = (p.meta || []).map(function(m){ return m.label + ': ' + m.value; }).join(' · ');
+      return (
+        '<div class="project-row" data-id="' + escapeHtml(p.id) + '">' +
+          '<div class="project-thumb">' + thumb + '</div>' +
+          '<div class="project-info">' +
+            '<h3>' + escapeHtml(p.title) + '</h3>' +
+            '<div class="project-meta-line">' + escapeHtml(p.client) + (metaLine ? ' — ' + escapeHtml(metaLine) : '') + '</div>' +
+          '</div>' +
+          '<span class="cat-badge">' + CAT_LABEL[p.category] + '</span>' +
+          '<div class="project-actions">' +
+            '<button class="icon-btn" data-action="edit" aria-label="Edit"><svg><use href="#i-edit"/></svg></button>' +
+            '<button class="icon-btn danger" data-action="delete" aria-label="Delete"><svg><use href="#i-trash"/></svg></button>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('') + '</div>';
+  }
+
+  function loadProjects(){
+    listContainer.innerHTML = '<div class="loading-state">Loading projects…</div>';
+    fetch('/admin/api/projects', { headers: { 'Accept': 'application/json' } })
+      .then(function(res){
+        if (!res.ok) throw new Error('Request failed (' + res.status + ')');
+        return res.json();
+      })
+      .then(function(data){
+        projects = Array.isArray(data) ? data : [];
+        renderList();
+      })
+      .catch(function(err){
+        listContainer.innerHTML = '<div class="error-state">Couldn\'t load projects — ' + escapeHtml(err.message) + '. Refresh to try again.</div>';
+      });
+  }
+
+  document.getElementById('filterPills').addEventListener('click', function(e){
+    var btn = e.target.closest('.filter-pill');
+    if (!btn) return;
+    document.querySelectorAll('.filter-pill').forEach(function(p){ p.classList.remove('is-active'); });
+    btn.classList.add('is-active');
+    activeFilter = btn.getAttribute('data-filter');
+    renderList();
+  });
+
+  listContainer.addEventListener('click', function(e){
+    var btn = e.target.closest('.icon-btn');
+    if (!btn) return;
+    var row = btn.closest('.project-row');
+    var id = row.getAttribute('data-id');
+    var project = projects.find(function(p){ return p.id === id; });
+    if (!project) return;
+
+    if (btn.getAttribute('data-action') === 'edit'){
+      startEdit(project);
+    } else if (btn.getAttribute('data-action') === 'delete'){
+      if (!window.confirm('Remove "' + project.title + '"? This can\'t be undone.')) return;
+      btn.disabled = true;
+      fetch('/admin/api/projects?id=' + encodeURIComponent(id), { method: 'DELETE' })
+        .then(function(res){ if (!res.ok) throw new Error('Delete failed (' + res.status + ')'); })
+        .then(function(){
+          projects = projects.filter(function(p){ return p.id !== id; });
+          renderList();
+          if (editingId === id) resetForm();
+        })
+        .catch(function(err){
+          window.alert('Could not delete: ' + err.message);
+          btn.disabled = false;
+        });
+    }
+  });
+
+  cancelEditBtn.addEventListener('click', resetForm);
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    var payload = {
+      title: document.getElementById('fTitle').value.trim(),
+      client: document.getElementById('fClient').value.trim(),
+      category: document.getElementById('fCategory').value,
+      imageUrl: document.getElementById('fImage').value.trim(),
+      meta: collectMeta(),
+    };
+
+    if (!payload.title || !payload.client){
+      setStatus('Title and client/server name are required.', 'error');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    setStatus(editingId ? 'Saving changes…' : 'Adding project…');
+
+    var isEdit = !!editingId;
+    if (isEdit) payload.id = editingId;
+
+    fetch('/admin/api/projects', {
+      method: isEdit ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+      .then(function(res){
+        return res.json().then(function(data){
+          if (!res.ok) throw new Error(data.error || 'Request failed (' + res.status + ')');
+          return data;
+        });
+      })
+      .then(function(saved){
+        if (isEdit){
+          projects = projects.map(function(p){ return p.id === saved.id ? saved : p; });
+        } else {
+          projects.unshift(saved);
+        }
+        renderList();
+        resetForm();
+        setStatus(isEdit ? 'Changes saved.' : 'Project added.', 'ok');
+      })
+      .catch(function(err){
+        setStatus(err.message, 'error');
+      })
+      .finally(function(){
+        submitBtn.disabled = false;
+      });
+  });
+
+  loadProjects();
+})();
+</script>
+</body>
+</html>
